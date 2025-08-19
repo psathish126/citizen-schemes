@@ -3,23 +3,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Clock, Users, MapPin } from "lucide-react";
 
+import { Scheme } from "@/hooks/useSchemes";
+
 interface SchemeCardProps {
-  scheme: {
-    id: string;
-    name: string;
-    ministry: string;
-    description: string;
-    benefits: string[];
-    eligibility: string[];
-    deadline?: string;
-    beneficiaries: string;
-    state?: string;
-    category: string;
-    applicationLink: string;
-  };
+  scheme: Scheme;
+  onViewDetails?: (scheme: Scheme) => void;
 }
 
-export const SchemeCard = ({ scheme }: SchemeCardProps) => {
+export const SchemeCard = ({ scheme, onViewDetails }: SchemeCardProps) => {
+  const handleApplyNow = () => {
+    window.open(scheme.applicationLink, '_blank');
+  };
+
+  const handleViewDetails = () => {
+    onViewDetails?.(scheme);
+  };
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
       <CardHeader>
@@ -79,11 +77,20 @@ export const SchemeCard = ({ scheme }: SchemeCardProps) => {
       
       <CardFooter className="pt-0">
         <div className="w-full space-y-2">
-          <Button className="w-full" size="sm">
+          <Button 
+            className="w-full" 
+            size="sm"
+            onClick={handleApplyNow}
+          >
             <ExternalLink className="h-4 w-4 mr-2" />
             Apply Now
           </Button>
-          <Button variant="outline" size="sm" className="w-full">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+            onClick={handleViewDetails}
+          >
             View Details
           </Button>
         </div>

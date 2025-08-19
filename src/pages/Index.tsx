@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, TrendingUp, Users, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Layout } from "@/components/Layout";
 import { CategoryGrid } from "@/components/CategoryGrid";
 import { SchemeCard } from "@/components/SchemeCard";
+import { SchemeDetailModal } from "@/components/SchemeDetailModal";
+import { useSchemes, Scheme } from "@/hooks/useSchemes";
 
 const featuredSchemes = [
   {
@@ -89,6 +93,43 @@ const stats = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedScheme, setSelectedScheme] = useState<Scheme | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { allSchemes } = useSchemes();
+
+  const handleSearch = () => {
+    navigate(`/schemes?search=${encodeURIComponent(searchQuery)}`);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    navigate(`/schemes?category=${categoryId}`);
+  };
+
+  const handleViewDetails = (scheme: Scheme) => {
+    setSelectedScheme(scheme);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedScheme(null);
+  };
+
+  const handleCheckEligibility = () => {
+    navigate('/eligibility-check');
+  };
+
+  const handleBrowseAllSchemes = () => {
+    navigate('/schemes');
+  };
   return (
     <Layout>
       {/* Hero Section */}
@@ -113,9 +154,12 @@ const Index = () => {
                   <Input 
                     placeholder="Search schemes by name, category, or benefits..."
                     className="pl-10 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleKeyPress}
                   />
                 </div>
-                <Button size="lg" className="px-8">
+                <Button size="lg" className="px-8" onClick={handleSearch}>
                   Search
                 </Button>
               </div>
@@ -123,10 +167,10 @@ const Index = () => {
 
             {/* Quick Actions */}
             <div className="flex flex-wrap justify-center gap-4">
-              <Button variant="secondary" size="lg">
+              <Button variant="secondary" size="lg" onClick={handleCheckEligibility}>
                 Check My Eligibility
               </Button>
-              <Button variant="outline" size="lg" className="bg-white/10 text-white border-white hover:bg-white hover:text-primary">
+              <Button variant="outline" size="lg" className="bg-white/10 text-white border-white hover:bg-white hover:text-primary" onClick={handleBrowseAllSchemes}>
                 Browse All Schemes
               </Button>
             </div>
@@ -166,13 +210,13 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {featuredSchemes.map((scheme) => (
-              <SchemeCard key={scheme.id} scheme={scheme} />
+            {allSchemes.slice(0, 3).map((scheme) => (
+              <SchemeCard key={scheme.id} scheme={scheme} onViewDetails={handleViewDetails} />
             ))}
           </div>
           
           <div className="text-center">
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" onClick={handleBrowseAllSchemes}>
               View All Schemes
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -190,10 +234,10 @@ const Index = () => {
             </p>
           </div>
           
-          <CategoryGrid />
+          <CategoryGrid onCategorySelect={handleCategorySelect} />
           
           <div className="text-center mt-8">
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" onClick={handleBrowseAllSchemes}>
               View All Categories
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -211,15 +255,22 @@ const Index = () => {
             Answer a few questions about yourself and get personalized scheme recommendations
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary">
+            <Button size="lg" variant="secondary" onClick={handleCheckEligibility}>
               Start Eligibility Check
             </Button>
-            <Button size="lg" variant="outline" className="bg-white/10 text-white border-white hover:bg-white hover:text-primary">
+            <Button size="lg" variant="outline" className="bg-white/10 text-white border-white hover:bg-white hover:text-primary" onClick={handleBrowseAllSchemes}>
               Learn More
             </Button>
           </div>
         </div>
       </section>
+
+      {/* Scheme Detail Modal */}
+      <SchemeDetailModal
+        scheme={selectedScheme}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </Layout>
   );
 };

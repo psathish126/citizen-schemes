@@ -62,13 +62,13 @@ export const Layout = ({ children }: LayoutProps) => {
               <a href="/schemes" className="text-foreground hover:text-primary transition-colors">
                 All Schemes
               </a>
-              <a href="/categories" className="text-foreground hover:text-primary transition-colors">
+              <a href="/schemes" className="text-foreground hover:text-primary transition-colors">
                 Categories
               </a>
-              <a href="/news" className="text-foreground hover:text-primary transition-colors">
+              <a href="/schemes" className="text-foreground hover:text-primary transition-colors">
                 News & Updates
               </a>
-              <a href="/help" className="text-foreground hover:text-primary transition-colors">
+              <a href="/schemes" className="text-foreground hover:text-primary transition-colors">
                 Help
               </a>
             </nav>

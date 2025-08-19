@@ -122,7 +122,14 @@ const categories: Category[] = [
   }
 ];
 
-export const CategoryGrid = () => {
+interface CategoryGridProps {
+  onCategorySelect?: (categoryId: string) => void;
+}
+
+export const CategoryGrid = ({ onCategorySelect }: CategoryGridProps = {}) => {
+  const handleCategoryClick = (categoryId: string) => {
+    onCategorySelect?.(categoryId);
+  };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {categories.map((category) => {
@@ -131,6 +138,7 @@ export const CategoryGrid = () => {
           <Card 
             key={category.id} 
             className="hover:shadow-lg transition-shadow duration-200 cursor-pointer group"
+            onClick={() => handleCategoryClick(category.id)}
           >
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
